@@ -1,3 +1,4 @@
 #### Netbeans artifacts
 nbproject/
 build.xml
+/build/
