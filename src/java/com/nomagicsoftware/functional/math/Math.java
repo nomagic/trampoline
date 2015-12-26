@@ -3,6 +3,7 @@ package com.nomagicsoftware.functional.math;
 
 import com.nomagicsoftware.functional.TailCall;
 import java.math.BigInteger;
+import java.util.Objects;
 
 /**
  *
@@ -52,5 +53,21 @@ public abstract class Math
         if (countdown == 1)
             return TailCall.terminate(total);
         return () -> factorial(countdown - 1, total.multiply(BigInteger.valueOf(countdown)));
+    }
+    
+    public static long sum(int[] input)
+    {
+        Objects.requireNonNull(input);
+        if (input.length == 0)
+            return 0L;
+        //return TailCall.trampoline(sum(input, input.length - 1, 0L));
+        return sum(input, input.length - 1, 0L).trampoline();
+    }
+    
+    private static TailCall<Long> sum(int[] input, int index, long total)
+    {
+        if (0 == index)
+            return TailCall.terminate(input[0] + total);
+        return () -> sum(input, index - 1, input[index] + total);
     }
 }
