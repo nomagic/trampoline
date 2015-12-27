@@ -62,7 +62,7 @@ public interface TailCall<T>
      */
     default T value() throws IllegalStateException //Hmm, maybe change this to protected?
     {
-        throw new IllegalStateException("#value() mandates a #complete() TailCall");
+        throw new IllegalStateException("#value() mandates a #finished() TailCall");
     }
     
     /**
