@@ -1,6 +1,11 @@
 
 package com.nomagicsoftware.functional;
 
+import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+
 /**
  * A TailCall is a higher-order function, viz. one that takes no arguments and returns
  * a TailCall when {@link #call() called} <br>
@@ -40,6 +45,7 @@ package com.nomagicsoftware.functional;
  *          return TailCall.terminate(total);
  *      return () -> factorial(remaining - 1, total * remaining)
  *  }
+ *  factorial(10, 1L).trampoline();
  * </pre>
  * 
  * 
@@ -60,7 +66,7 @@ public interface TailCall<T>
      * @throws IllegalStateException when invoked 
      * @see #finished() 
      */
-    default T value() throws IllegalStateException //Hmm, maybe change this to protected?
+    default T value() throws IllegalStateException
     {
         throw new IllegalStateException("#value() mandates a #finished() TailCall");
     }
@@ -86,6 +92,20 @@ public interface TailCall<T>
     default T trampoline()
     {
         return TailCall.trampoline(this);
+    }
+
+    /**
+     *
+     * @param service the {@link ExecutorService} to execute this {@code TailCall} to completion
+     * @return
+     * @throws NullPointerException if {@code #service} is null
+     */
+    default Future<T> async(ExecutorService service) throws NullPointerException
+    {
+        Objects.requireNonNull(service);
+        if (finished())
+            return new FinishedFuture<>(value());
+        return service.submit((Callable<T>) this::trampoline);
     }
     
     static <R> TailCall<R> terminate(final R value)
@@ -118,5 +138,23 @@ public interface TailCall<T>
         for(; ! function.finished(); function = function.call())
         {}    
         return function.value();
+    }
+    
+    /**
+     * Note: you may not define a default {@link Object#equals(Object) equals} method
+     *       (method dispatch on any interface type prefers concrete class implementations
+     *        over any default method implementations)
+     * @param <R>
+     * @param one
+     * @param another
+     * @return
+     */
+    static <R> boolean equals(TailCall<R> one, TailCall<R> another)
+    {
+        if (one == another)
+            return true;
+        if (one == null ^ another == null)
+            return false;
+        return Objects.equals(one.trampoline(), another.trampoline());
     }
 }
