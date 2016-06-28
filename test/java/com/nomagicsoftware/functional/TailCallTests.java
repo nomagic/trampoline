@@ -1,5 +1,4 @@
 package com.nomagicsoftware.functional;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -31,6 +30,8 @@ public class TailCallTests
     public void async() throws Throwable
     {
         ExecutorService pool = Executors.newFixedThreadPool(1);
+        
+        
         TailCall<Long> factorial_10 = factorial(10, 1L);
 //        Future<Long> submit = es.submit((Callable<Long>) factorial_10::trampoline);
         Future<Long> async = factorial_10.async(pool);
@@ -44,10 +45,12 @@ public class TailCallTests
     public void unnecessary() throws Throwable
     {
         ExecutorService pool = Executors.newFixedThreadPool(1);
+        pool.shutdown(); // the ES shouldn't be used
+        assertTrue(pool.awaitTermination(1L, TimeUnit.DAYS));
         TailCall<Long> factorial_1 = factorial(1, 1L);
         Future<Long> async = factorial_1.async(pool);
         assertEquals("", 1L, (long) async.get());
-        assertTrue(null, async instanceof FinishedFuture);
+        //assertTrue(null, async instanceof FinishedFuture);
         
     }
     static TailCall<Long> factorial(int countdown, long total)
