@@ -1,7 +1,5 @@
 package com.nomagicsoftware.functional;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -59,18 +57,5 @@ public class TailCallTests
         return () -> factorial(countdown - 1, countdown * total);
     }
     
-    static class SOBenign
-    {
-        Map map;
-        
-        Object get(Object key)
-        {
-            Map temp;
-            if ((temp = this.map) == null)
-            {
-                
-            }
-            return temp.get(key);
-        }
-    }
+    
 }
