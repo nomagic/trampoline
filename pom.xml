@@ -40,15 +40,12 @@
               <artifactId>maven-surefire-plugin</artifactId>
               <version>2.12.4</version>
               <configuration>
-                
                     <workingDirectory>${basedir}\src\test\java</workingDirectory>
                     <includes>
                         <include>**/*Tests.java</include>
                     </includes>
-                
               </configuration>
             </plugin>
-            
     </plugins>
     </build>
 </project>
