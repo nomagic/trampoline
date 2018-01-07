@@ -39,18 +39,18 @@ import java.util.concurrent.Future;
  *  {
  *      return factorial(i, 1L).trampoline()
  *  }
- *  TailCall<Long> factorial(int remaining, long total)
+ *  TailCall&lt;Long&gt; factorial(int remaining, long total)
  *  {
  *      if (remaining &lt;= 1)
  *          return TailCall.terminate(total);
- *      return () -> factorial(remaining - 1, total * remaining)
+ *      return () -&gt; factorial(remaining - 1, total * remaining)
  *  }
  *  factorial(10, 1L).trampoline();
  * </pre>
  * 
  * 
  * @author thurston
- * @param <T>
+ * @param <T> the return value type
  */
 @FunctionalInterface
 public interface TailCall<T>
@@ -97,7 +97,7 @@ public interface TailCall<T>
     /**
      *
      * @param service the {@link ExecutorService} to execute this {@code TailCall} to completion
-     * @return
+     * @return {@link Future future}
      * @throws NullPointerException if {@code #service} is null
      */
     default Future<T> async(ExecutorService service) throws NullPointerException
@@ -144,10 +144,10 @@ public interface TailCall<T>
      * Note: you may not define a default {@link Object#equals(Object) equals} method
      *       (method dispatch on any interface type prefers concrete class implementations
      *        over any default method implementations)
-     * @param <R>
-     * @param one
-     * @param another
-     * @return
+     * @param <R> type of TailCalls
+     * @param one a tailcall
+     * @param another a tailcall
+     * @return whether the two tailcalls' values are equal
      */
     static <R> boolean equals(TailCall<R> one, TailCall<R> another)
     {
